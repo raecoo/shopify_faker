@@ -1,5 +1,6 @@
 require 'fabrication'
 require 'fabrication/syntax/make'
+require 'faker'
 
 class Sham
   def Sham.func(name, f)
@@ -27,7 +28,7 @@ Fabricator(:shopify_variant, class_name: 'Hash') do
   fulfillment_service   "manual"
   inventory_management  nil
 
-  option1 "Small"
+  option1 { Faker::Lorem.word }
   option2 nil
   option3 nil
 
