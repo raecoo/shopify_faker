@@ -10,8 +10,8 @@ Gem::Specification.new do |spec|
   spec.email         = ["hosh@shopapps.co"]
 
   spec.summary       = %q{Generate fake Shopify data for testing}
-  spec.description   = %q{TODO: Write a longer description or delete this line.}
-  spec.homepage      = "TODO: Put your gem's website or public repo URL here."
+  spec.description   = %q{Generate fake Shopify data for testing and setting up dev shops}
+  spec.homepage      = "https://github.com/shopappsio/shopify_faker"
 
   # Prevent pushing this gem to RubyGems.org by setting 'allowed_push_host', or
   # delete this section to allow pushing this gem to any host.
@@ -27,7 +27,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_dependency 'faker'
-  spec.add_dependency 'activesupport', '=> 3.0.0'
+  spec.add_dependency 'activesupport', '>= 3.0.0'
 
   spec.add_development_dependency "bundler", "~> 1.10"
   spec.add_development_dependency "rake", "~> 10.0"
