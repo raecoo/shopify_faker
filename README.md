@@ -22,7 +22,30 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+This is primarily intended for testing suites, though you can also use this
+to generate fake data for staging environments.
+
+Currently, only the Fabrication gem is supported. You do this with:
+
+```
+require 'shopify_faker/blueprints/fabrication.rb'
+```
+
+Drop this in `rails_helper` or something similar.
+
+There are also helpers that will work with RSpec:
+
+```
+include ShopifyFaker::RSPec::Fabrication
+```
+
+in an example group.
+
+To generate a fake product data:
+
+```
+attributes_for(:shopify_product, title: 'something')
+```
 
 ## Development
 
