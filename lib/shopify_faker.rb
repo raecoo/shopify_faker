@@ -1,5 +1,7 @@
 require "shopify_faker/version"
 
 module ShopifyFaker
-  # Your code goes here...
+  module RSpec
+    autoload :Fabrication, 'shopify_faker/rspec/fabrication'
+  end
 end
