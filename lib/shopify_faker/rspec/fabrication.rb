@@ -11,9 +11,9 @@ module ShopifyFaker
         let(:shopify_variant) { attributes_for(:shopify_variant, id: variant_id, title: variant_title, image_id: image_id) }
         let(:shopify_image)   { attributes_for(:shopify_image, id: image_id, position: position, variant_ids: variant_ids) }
         let(:variant_ids)     { [variant_id] }
-        let(:variant_id)      { Faker::Number.number(12).to_i }
-        let(:product_id)      { Faker::Number.number(12).to_i }
-        let(:image_id)        { Faker::Number.number(12).to_i }
+        let(:variant_id)      { rand_shopify_id.() }
+        let(:product_id)      { rand_shopify_id.() }
+        let(:image_id)        { rand_shopify_id.() }
 
         let(:product_title)   { Faker::Commerce.product_name }
         let(:product_type)    { Faker::Lorem.word }
@@ -21,6 +21,8 @@ module ShopifyFaker
         let(:position)        { rand(10) }
         let(:vendor)          { Faker::Company.name }
         let(:handle)          { Faker::Internet.slug(Faker::Company.bs) }
+
+        let(:rand_shopify_id) { ->(_ = nil) { Faker::Number.number(12).to_i } }
       end
 
       def attributes_for(*args)
