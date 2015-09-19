@@ -103,7 +103,7 @@ Fabricator(:shopify_customer, class_name: 'Hash') do
   initialize_with { raise 'Use attributes_for' }
 
   id                { Faker::Number.number(18).to_i }
-  email             { Faker::Internet.email }
+  email             { |attributes| attributes[:email] || Faker::Internet.safe_email }
   first_name        { Faker::Name.first_name }
   last_name         { Faker::Name.last_name }
   created_at        { (rand(100) + 1).days.ago.to_datetime.rfc3339 }
@@ -131,17 +131,13 @@ Fabricator(:shopify_address, class_name: 'Hash') do
   first_name      { Faker::Name.first_name }
   last_name       { Faker::Name.last_name }
   company         { Faker::Company.name }
-  address1        { Faker::Address.street_address }
-  address2        { Faker::Address.secondary_address }
-  phone           { Faker::PhoneNumber.phone_number }
-  city            { Faker::Address.city }
-  zip             { Faker::Address.zip }
-  province        { Faker::Address.state }
-  country         { Faker::Address.country }
-  latitude        { Faker::Address.latitude }
-  longitude       { Faker::Address.longitude }
-  country_code    { Faker::Address.country_code }
-  province_code   { Faker::Address.state_abbr }
+  address1        { '6009 Westline Dr' }
+  city            { 'Houston' }
+  zip             { '77036' }
+  province        { 'Texas' }
+  country         { 'United States' }
+  country_code    { 'US' }
+  province_code   { 'TX' }
 
   after_build(&:stringify_keys!)
 end
@@ -150,8 +146,8 @@ Fabricator(:shopify_line_item, class_name: 'Hash') do
   initialize_with { raise 'Use attributes_for' }
 
   id                    { Faker::Number.number(18).to_i }
-  variant_id            { Faker::Number.number(18).to_i }
-  product_id            { Faker::Number.number(18).to_i }
+  variant_id            { |attributes| attributes[:variant_id] || Faker::Number.number(18).to_i }
+  product_id            { |attributes| attributes[:product_id] || Faker::Number.number(18).to_i }
   title                 { Faker::Commerce.product_name }
   name                  { Faker::Commerce.product_name }
   price                 { Faker::Commerce.price }
@@ -159,8 +155,6 @@ Fabricator(:shopify_line_item, class_name: 'Hash') do
   grams                 { rand(500)}
   sku                   { SecureRandom.urlsafe_base64 }
   variant_title         { Faker::Commerce.color }
-  vendor                { Faker::Lorem.word }
-  total_discount        { Faker::Commerce.price }
   requires_shipping     { rand > 0.25 }
   taxable               { rand > 0.1 }
   properties            []
@@ -170,7 +164,7 @@ Fabricator(:shopify_line_item, class_name: 'Hash') do
   fulfillable_quantity  { rand(10) }
   fulfillment_service   "manual"
   fulfillment_status    nil
-  tax_lines             { Array.new(rand(10) + 1) { Fabricate.attributes_for(:shopify_tax_line_item) } }
+  # tax_lines             { Array.new(rand(10) + 1) { Fabricate.attributes_for(:shopify_tax_line_item) } }
 
   after_build(&:stringify_keys!)
 end
@@ -192,7 +186,6 @@ Fabricator(:shopify_shipping_line_item, class_name: 'Hash') do
   price       { Faker::Commerce.price }
   code        { Faker::Commerce.product_name }
   source      "shopify"
-  tax_lines   { Array.new(rand(10) + 1) { Fabricate.attributes_for(:shopify_tax_line_item) } }
 
   after_build(&:stringify_keys!)
 end
@@ -236,13 +229,6 @@ Fabricator(:shopify_transaction_line_item, class_name: 'Hash') do
   status          "success"
   amount          { Faker::Commerce.price }
   currency        "USD"
-  source_name     "web"
-  location_id     nil
-  user_id         nil
-  parent_id       nil
-  device_id       nil
-  receipt         nil
-  error_code      nil
   payment_details { Fabricate.attributes_for(:credit_card) }
 
   after_build(&:stringify_keys!)
@@ -251,62 +237,12 @@ end
 Fabricator(:shopify_order, class_name: 'Hash') do
   initialize_with { raise 'Use attributes_for' }
 
-  id                      { Faker::Number.number(18).to_i }
-  email                   { Faker::Internet.email }
-  number                  { Faker::Number.number(4).to_i }
-  name                    { "##{Faker::Number.number(4).to_i}" }
-  order_number            { Faker::Number.number(4).to_i }
-  created_at              { (rand(100) + 1).days.ago.to_datetime.rfc3339 }
-  updated_at              { (Time.now.utc - (rand(100) + 1).hours).to_datetime.rfc3339 }
-  total_price             { Faker::Commerce.price }
-  subtotal_price          { Faker::Commerce.price }
-  total_weight            { Faker::Number.between(1, 10) }
-  total_tax               { Faker::Commerce.price }
-  total_discounts         { Faker::Commerce.price }
-  total_line_items_price  { Faker::Commerce.price }
-  total_price_usd         { Faker::Commerce.price }
-  cart_token              { Faker::Number.hexadecimal(30) }
-  processed_at            { (Time.now.utc - (rand(100) + 1).hours).to_datetime.rfc3339 }
-  line_items              { Array.new(rand(3) + 1) { Fabricate.attributes_for(:shopify_line_item) } }
-  shipping_lines          { Array.new(rand(3) + 1) {Fabricate.attributes_for(:shopify_shipping_line_item) } }
-  billing_address         { Fabricate.attributes_for(:shopify_address) }
-  shipping_address        { Fabricate.attributes_for(:shopify_address) }
-  refunds                 { Array.new(rand(3)) { Fabricate.attributes_for(:shopify_refund) } }
-  customer                { Fabricate.attributes_for(:shopify_customer) }
-  currency                "USD"
-  financial_status        "voided"
-  buyer_accepts_marketing true
-  closed_at               nil
-  note                    nil
-  token                   nil
-  gateway                 nil
-  test                    true
-  taxes_included          false
-  confirmed               false
-  referring_site          nil
-  landing_site            nil
-  cancelled_at            nil
-  cancel_reason           nil
-  checkout_token          { Faker::Number.hexadecimal(30) }
-  reference               nil
-  user_id                 nil
-  location_id             nil
-  source_identifier       nil
-  source_url              nil
-  device_id               nil
-  browser_ip              nil
-  landing_site_ref        nil
-  discount_codes          []
-  note_attributes         []
-  payment_gateway_names   ["bogus"]
-  processing_method       ""
-  checkout_id             nil
-  source                  "browser"
-  source_name             "web"
-  fulfillment_status      "pending"
-  fulfillments            []
-  tax_lines               []
-  tags                    ""
+  id            { Faker::Number.number(18).to_i }
+  email         { Faker::Internet.safe_email }
+  order_number  { Faker::Number.number(4).to_i }
+  name          { |attributes| "##{attributes[:order_number] || Faker::Number.number(4).to_i}" }
+  customer      { |attributes| Fabricate.attributes_for(:shopify_customer, email: attributes[:email]) }
+  currency      "USD"
 
   after_build(&:stringify_keys!)
 end
