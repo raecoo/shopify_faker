@@ -16,7 +16,7 @@ Fabricator(:shopify_variant, class_name: 'Hash') do
   initialize_with { raise 'Use attributes_for' }
 
   id         { Faker::Number.number(18).to_i }
-  product_id { Faker::Number.number(18).to_i }
+  product_id { |attributes| "##{attributes[:product_id] || Faker::Number.number(18).to_i}" }
   title      { Faker::Commerce.product_name }
   price      { Faker::Commerce.price }
   sku        { SecureRandom.urlsafe_base64 }
@@ -52,14 +52,14 @@ Fabricator(:shopify_image, class_name: 'Hash') do
   initialize_with { raise 'Use attributes_for' }
 
   id         { Faker::Number.number(18).to_i }
-  product_id { Faker::Number.number(18).to_i }
+  product_id { |attributes| "##{attributes[:product_id] || Faker::Number.number(18).to_i}" }
   position   { rand(10) }
   src        { "//cdn.shopify.com/s/assets/shopify_shirt-#{SecureRandom.hex(32)}.png" }
 
   created_at        { (rand(100) + 1).days.ago.to_datetime.rfc3339 }
   updated_at        { (Time.now.utc - (rand(100) + 1).hours).to_datetime.rfc3339 }
 
-  variant_ids []
+  variant_ids { |attributes| attributes[:variant_ids] || []}
 
   after_build(&:stringify_keys!)
 end
@@ -73,8 +73,8 @@ Fabricator(:shopify_product, class_name: 'Hash') do
   product_type    { Faker::Lorem.word }
   handle          { Faker::Internet.slug(Faker::Company.bs) }
 
-  variants        { Array.new(rand(10) + 1) { Fabricate.attributes_for(:shopify_variant) } }
-  images          { Array.new(rand(10) + 1) { Fabricate.attributes_for(:shopify_image) } }
+  variants        { |attributes| Array.new(rand(10) + 1) { Fabricate.attributes_for(:shopify_variant, product_id: attributes[:id]) } }
+  images          { |attributes| Array.new(rand(10) + 1) { Fabricate.attributes_for(:shopify_image, product_id: attributes[:id]) } }
 
   created_at      { (rand(100) + 1).days.ago.to_datetime.rfc3339 }
   updated_at      { (Time.now.utc - (rand(100) + 1).hours).to_datetime.rfc3339 }
